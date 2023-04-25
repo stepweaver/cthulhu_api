@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>myFlix Documentation</title>
+</head>
+<body>
+  <h1>Achievement 2 Project: myFlix</h1>
+  <p>To build the server-side component of a "movies" web application. The web application will provide users with access to information about different movies, directors, and genres. Users will be able to register, deregister, update their personal information, and create a list of their favorite movies.</p><br />
+  <hr><br />
+
+  <div class="table">
+  <table>
+    <tr>
+      <th>Business Logic</th>
+      <th>URL</th>
+      <th>HTTP Method</th>
+      <th>Request body data format</th>
+      <th>Respond body data format</th>
+    </tr>
+    <tr>
+      <td>Return Welcome Message</td>
+      <td>/</td>
+      <td>GET</td>
+      <td>None</td>
+      <td>Welcome to MyFlix!</td>
+    </tr>
+    <tr>
+      <td>Create new user</td>
+      <td>/users</td>
+      <td>POST</td>
+      <td>A JSON object holding data about the new user to be added, structured like:<br />
+        {<br />
+          &nbsp &nbsp "username": "username",<br />
+          &nbsp &nbsp "password": "passord",<br />
+          &nbsp &nbsp "email": "email",<br />
+          &nbsp &nbsp "birth": "MM/DD/YYYY"<br />
+        }
+      </td>
+      <td>A JSON object holding data about the new user created, structured like:<br />
+        {<br />
+          &nbsp &nbsp "username": "username",<br />
+          &nbsp &nbsp "password": "passord",<br />
+          &nbsp &nbsp "email": "email",<br />
+          &nbsp &nbsp "birth": "MM/DD/YYY",<br />
+          &nbsp &nbsp "favoriteMovies": ["favoriteMovies"],<br />
+          &nbsp &nbsp "_id": "ObjecId"<br />
+        }
+      </td>
+    </tr>
+    <tr>
+      <td>Return a list of ALL movies to the user</td>
+      <td>/movies</td>
+      <td>GET</td>
+      <td>None</td>
+      <td>A JSON object holding data about ALL movies, structured like:<br />
+        {<br />
+          &nbsp &nbsp "title": "title",<br />
+          &nbsp &nbsp "year": "year",<br />
+          &nbsp &nbsp "rating": "rating",<br />
+          &nbsp &nbsp "description": "description",<br />
+          &nbsp &nbsp "genre": {<br />
+            &nbsp &nbsp &nbsp &nbsp "name": "name",<br />
+            &nbsp &nbsp &nbsp &nbsp "description": "description"<br />
+          &nbsp &nbsp },<br />
+          &nbsp &nbsp "director": {<br />
+            &nbsp &nbsp &nbsp &nbsp "name": "name",<br />
+            &nbsp &nbsp &nbsp &nbsp "bio": "bio",<br />
+            &nbsp &nbsp &nbsp &nbsp "birth": "MM/DD/YYYY"<br />
+          &nbsp &nbsp },<br />
+          &nbsp &nbsp "actors": ["actors"],<br />
+          &nbsp &nbsp "imageURL": "imageURL",<br />
+          &nbsp &nbsp "featured": true/false<br />
+        }
+      </td>
+    </tr>
+    <tr>
+      <td>Return data about a single movie, by title</td>
+      <td>/movies/:title</td>
+      <td>GET</td>
+      <td>None</td>
+      <td>A JSON object holding data about a single movie, structured like:<br />
+        {<br />
+          &nbsp &nbsp "title": "title",<br />
+          &nbsp &nbsp "year": "year",<br />
+          &nbsp &nbsp "rating": "rating",<br />
+          &nbsp &nbsp "description": "description",<br />
+          &nbsp &nbsp "genre": {<br />
+            &nbsp &nbsp &nbsp &nbsp "name": "name",<br />
+            &nbsp &nbsp &nbsp &nbsp "description": "description"<br />
+          &nbsp &nbsp },<br />
+          &nbsp &nbsp "director": {<br />
+            &nbsp &nbsp &nbsp &nbsp "name": "name",<br />
+            &nbsp &nbsp &nbsp &nbsp "bio": "bio",<br />
+            &nbsp &nbsp &nbsp &nbsp "birth": "MM/DD/YYYY"<br />
+          &nbsp &nbsp },<br />
+          &nbsp &nbsp "imageURL": "imageURL",<br />
+          &nbsp &nbsp "actors": ["actors"],<br />
+          &nbsp &nbsp "featured": true/false<br />
+        }
+      </td>
+    </tr>
+    <tr>
+      <td>Return data about a genre, by name</td>
+      <td>/movies/genre/:name</td>
+      <td>GET</td>
+      <td>None</td>
+      <td>A JSON object holding data about the genre category and a description, structure like:<br />
+        {<br />
+          &nbsp &nbsp "genre": {<br />
+            &nbsp &nbsp &nbsp &nbsp "name": "name",<br />
+            &nbsp &nbsp &nbsp &nbsp "description": "description"<br />
+          &nbsp &nbsp }<br />
+        }<br />
+      </td>
+    </tr>
+    <tr>
+      <td>Return data about a director, by name</td>
+      <td>/movies/director/:name</td>
+      <td>GET</td>
+      <td>None</td>
+      <td>A JSON object holding data about director - name, bio, and birthdate, structured like:<br />
+        {<br />
+          &nbsp &nbsp director: {<br />
+            &nbsp &nbsp &nbsp &nbsp "name": "name",<br />
+            &nbsp &nbsp &nbsp &nbsp "bio": "bio",<br />
+            &nbsp &nbsp &nbsp &nbsp "birth": "MM/DD/YYYY"<br />
+          &nbsp &nbsp }<br />
+        }
+      </td>
+    </tr>
+    <tr>
+      <td>Return data about all users</td>
+      <td>/users</td>
+      <td>GET</td>
+      <td>None</td>
+      <td>A JSON object holding data about all users, structured like:<br />
+        {<br />
+          &nbsp &nbsp "_id": "ObjectId",<br />
+          &nbsp &nbsp "username": "username",<br />
+          &nbsp &nbsp "password": "password",<br />
+          &nbsp &nbsp "birth": "MM/DD/YYYY",<br />
+          &nbsp &nbsp "favoriteMovies": ["favoriteMovies"]<br />
+        }
+      </td>
+    </tr>
+    <tr>
+      <td>Allow new users to register</td>
+      <td>/users</td>
+      <td>POST</td>
+      <td>A JSON object holding data about the new user to register, structured like:<br />
+        {<br />
+          &nbsp &nbsp "username": "username",<br />
+          &nbsp &nbsp "password": "passord",<br />
+          &nbsp &nbsp "email": "email"
+        }
+      </td>
+      <td>A JSON object holding data about the new user registered, structured like:<br />
+        {<br />
+          &nbsp &nbsp "username": "username",<br />
+          &nbsp &nbsp "password": "password",<br />
+          &nbsp &nbsp "email": "email",<br />
+          &nbsp &nbsp "favoriteMovies": ["favoriteMovies"],<br />
+          &nbsp &nbsp "_id": "ObjectId"<br />
+        }
+      </td>
+    </tr>
+    <tr>
+      <td>Allow users to login and generate JWT</td>
+      <td>/login</td>
+      <td>POST</td>
+      <td>Username and Password</td>
+      <td>A JSON object holding data about the user and a generated JSON Web Token,
+        structured like:<br />
+        {<br />
+        &nbsp &nbsp "user": {<br />
+        &nbsp &nbsp &nbsp &nbsp "_id": "ObjectdId",<br />
+        &nbsp &nbsp &nbsp &nbsp "username": "username",<br />
+        &nbsp &nbsp &nbsp &nbsp "password": hashedPassword,<br />
+        &nbsp &nbsp &nbsp &nbsp "email": "email",<br />
+        &nbsp &nbsp &nbsp &nbsp "brith": "Date",<br />
+        &nbsp &nbsp &nbsp &nbsp "favoriteMovies": ["favoriteMovies"]<br />
+        &nbsp &nbsp },<br />
+        &nbsp &nbsp "token": "JWT"<br />
+        }
+      </td>
+    </tr>
+    <tr>
+      <td>Allow users to update their username</td>
+      <td>/users/:username</td>
+      <td>PUT</td>
+      <td>A JSON object holding data about the user's "name" to be updated, structured like:<br />
+        {<br />
+          &nbsp &nbsp "username": "username",<br />
+        }
+      </td>
+      <td>A JSON object holding data about the user's "name" updated, structured like:<br />
+        {<br />
+          &nbsp &nbsp "_id": "ObjecId",<br />
+          &nbsp &nbsp "username": "username",<br />
+          &nbsp &nbsp "favoriteMovies": ["favoriteMovies"]<br />
+        }
+      </td>
+    </tr>
+    <tr>
+      <td>Allow users to add a movie to their list of favorites</td>
+      <td>/users/username/movies/:MovieId</td>
+      <td>POST</td>
+      <td>None</td>
+      <td>A JSON object holding data about the user, structured like:<br />
+        {<br />
+          &nbsp &nbsp "_id": "ObjectId"<br />
+          &nbsp &nbsp "username": "username"<br />
+          &nbsp &nbsp "password": "password"<br />
+          &nbsp &nbsp "email": "email"<br />
+          &nbsp &nbsp "favoriteMovies": ["favoriteMovies"]<br />
+        }  
+      </td>
+    </tr>
+    <tr>
+      <td>Allow users to remove a movie from their list</td>
+      <td>/users/username/movies/:MovieId</td>
+      <td>DELETE</td>
+      <td>None</td>
+      <td>A text message indicating the movie has been deleted from the user's favoriteMovies
+      </td>
+    </tr>
+    <tr>
+      <td>Allow existing users to deregister by username</td>
+      <td>/users/:username</td>
+      <td>DELETE</td>
+      <td>None</td>
+      <td>A text message indicating the user has been deregistered</td>
+    </tr>
+  </table>
+  </div>
+
+  <style>
+    body {
+      background: #071b24;
+      color: #dbbf77;
+      font-family: 'helvetica neue', sans-serif;
+      font-weight: 100;
+      font-size: 16px;
+    }
+
+    table {
+      border-collapse: collapse;
+    }
+
+    th {
+      font-size: 20px;
+    }
+
+    tr, td {
+      border: 2px dotted #dbbf77;
+      padding: 30px;
+    }
+  </style>
+</body>
+</html>
