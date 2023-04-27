@@ -1,10 +1,15 @@
-const express = require('express');
-  morgan = require('morgan');
+const express = require('express'),
+  morgan = require('morgan'),
+  fs = require('fs'), // import built in node modules fs and path
+  path = require('path');
 
 const app = express();
+// create a write stream (in append mode)
+// a 'log.txt' file is created in root directory
+const accessLogStream = fs.createWriteStream(path.join(__dirname, 'log.txt'), {flags: 'a'})
 
 // Middleware
-app.use(morgan('common')); // The 'common' parameter specifies that requests should be logged using Morgan's "common" format.
+app.use(morgan('dev', {stream: accessLogStream})); // The 'dev' parameter specifies that requests should be logged using Morgan's "dev" format.
 
 app.get('/', (req, res) => {
   res.send('Welcome to CthulhuFlix!');
@@ -17,4 +22,3 @@ app.get('/secreturl', (req, res) => {
 app.listen(8080, () => {
   console.log('Your app is listening on port 8080.');
 });
-
