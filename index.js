@@ -174,6 +174,10 @@ app.get('/movies/directors/:directorName', (req, res) => {
   }
 });
 
+app.get('/users', (req, res) => {
+  res.status(200).json(users);
+});
+
 // UPDATE
 app.put('/users/:id', (req, res) => {
   const { id } = req.params;
@@ -190,7 +194,31 @@ app.put('/users/:id', (req, res) => {
 });
 
 // DELETE
+app.delete('/users/:id/:movieTitle', (req, res) => {
+  const { id, movieTitle } = req.params;
 
+  let user = users.find( user => user.id == id );
+
+  if (user) {
+    user.favoriteMovies = user.favoriteMovies.filter( title => title !== movieTitle);
+    res.status(200).send(`${movieTitle} has been deleted from ${user.name}'s favorites`);
+  } else {
+    res.status(400).send('No such user');
+  }
+});
+
+app.delete('/users/:id', (req, res) => {
+  const { id } = req.params;
+
+  let user = users.find( user => user.id == id );
+
+  if (user) {
+    users = users.filter( user => user.id != id );
+    res.status(200).send(`${user.name}'s account has been deleted`);
+  } else {
+    res.status(400).send('No such user');
+  }
+});
 
 app.use((err, req, res, next) => {
   console.error(err.stack);
