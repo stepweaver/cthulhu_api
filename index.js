@@ -115,6 +115,19 @@ app.post('/users', (req, res) => {
   }
 });
 
+app.post('/users/:id/:movieTitle', (req, res) => {
+  const { id, movieTitle } = req.params;
+
+  let user = users.find( user => user.id == id );
+
+  if (user) {
+    user.favoriteMovies.push(movieTitle);
+    res.status(200).send(`${movieTitle} has been added to ${user.name}'s favorites`);
+  } else {
+    res.status(400).send('No such user');
+  }
+});
+
 // READ
 app.get('/', (req, res) => {
   res.send('Welcome to CthulhuFlix!');
@@ -138,6 +151,46 @@ app.get('/movies/:title', (req, res) => {
     res.status(400).send('No such movie');
   }
 });
+
+app.get('/movies/genres/:genreName', (req, res) => {
+  const { genreName } = req.params;
+  const genre = movies.find( movie => movie.Genre.Name === genreName ).Genre;
+
+  if (genre) {
+    res.status(200).json(genre);
+  } else {
+    res.status(400).send('No such genre');
+  }
+});
+
+app.get('/movies/directors/:directorName', (req, res) => {
+  const { directorName } = req.params;
+  const director = movies.find( movie => movie.Director.Name === directorName).Director;
+
+  if(director) {
+    res.status(200).json(director);
+  } else {
+    res.status(400).send('No such director');
+  }
+});
+
+// UPDATE
+app.put('/users/:id', (req, res) => {
+  const { id } = req.params;
+  const updatedUser = req.body;
+
+  let user = users.find( user => user.id == id ); // user.id will be a number and id will be a string. Using "==" is truthy.
+
+  if(user) {
+    user.name = updatedUser.name;
+    res.status(200).json(user);
+  } else {
+    res.status(400).send('No such user');
+  }
+});
+
+// DELETE
+
 
 app.use((err, req, res, next) => {
   console.error(err.stack);
