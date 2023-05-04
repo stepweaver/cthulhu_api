@@ -167,3 +167,5 @@
 ::1 - - [04/May/2023:19:31:24 +0000] "POST /users HTTP/1.1" 500 83 "-" "PostmanRuntime/7.32.2"
 ::1 - - [04/May/2023:19:41:57 +0000] "POST /users HTTP/1.1" 201 140 "-" "PostmanRuntime/7.32.2"
 ::1 - - [04/May/2023:19:46:39 +0000] "GET /users HTTP/1.1" 201 984 "-" "PostmanRuntime/7.32.2"
+::1 - - [04/May/2023:19:48:06 +0000] "GET /users HTTP/1.1" 201 984 "-" "PostmanRuntime/7.32.2"
+::1 - - [04/May/2023:19:48:17 +0000] "GET /users HTTP/1.1" 201 984 "-" "PostmanRuntime/7.32.2"
