@@ -1,9 +1,16 @@
 const express = require('express'),
+  mongoose = require('mongoose'),
+  Models = require('./models.js'),
   morgan = require('morgan'),
   fs = require('fs'), // import built in node modules fs and path
   path = require('path');
   bodyParser = require('body-parser');
   uuid = require('uuid');
+
+  const Movies = Models.Movie,
+    Users = Models.User;
+
+  mongoose.connect('mongodb://localhost:27017/cthulhuFlixDB', { userNewUrlParser: true, useUnifiedTopology: true });
 
 const app = express();
 // create a write stream (in append mode)
@@ -15,6 +22,7 @@ app.use(morgan('combined', {stream: accessLogStream})); // The 'combined' parame
 app.use(express.static('public'));
 app.use(morgan('combined'));
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 let users = [
   {
