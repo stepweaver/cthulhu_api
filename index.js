@@ -7,10 +7,12 @@ const express = require('express'),
   bodyParser = require('body-parser');
   uuid = require('uuid');
 
-  const Movies = Models.Movie,
-    Users = Models.User;
+  const Movies = Models.Movie;
+  const Users = Models.User;
 
-  mongoose.connect('mongodb://localhost:27017/cthulhuFlixDB', { userNewUrlParser: true, useUnifiedTopology: true });
+mongoose.set('debug', true);
+
+mongoose.connect('mongodb://127.0.0.1:27017/cthulhuFlixDB', { useNewUrlParser: true, useUnifiedTopology: true });
 
 const app = express();
 // create a write stream (in append mode)
@@ -24,103 +26,31 @@ app.use(morgan('combined'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-let users = [
-  {
-    id: 1,
-    name: 'davidrmcintyre',
-    favoriteMovies: []
-  },
-  {
-    id: 2,
-    name: 'smgruber',
-    favoriteMovies: []
-  },
-  {
-    id: 3,
-    name: 'deleteme',
-    favoriteMovies: ['Locke']
-  }
-];
-
-let movies = [
-  {
-    "Title": "Kings of the Road",
-    "Description": "The film is about a projection-equipment repair mechanic named Bruno Winter (Rüdiger Vogler), who meets the depressed Robert Lander (Hanns Zischler), who has just been through a break-up with his wife, after he drives his car into a river in a half-hearted suicide attempt.",
-    "Genre": {
-      "Name": "Road-Movie",
-      "Description": "A road movie is a film genre in which the main characters leave home on a road trip, typically altering the perspective from their everyday lives."
-    },
-    "Director": {
-      "Name": "Wim Wenders",
-      "Bio": "Wim Wenders is a German filmmaker, playwright, author, and photographer",
-      "dateOfBirth": 1945
-    },
-    "Year": 1976,
-    "ImageURL": "https://www.themoviedb.org/t/p/w1280/x2WvLtMJZ6OPz3GEhbEE1V29Pis.jpg",
-    "Featured": true
-  },
-  {
-    "Title": "Radio On",
-    "Description": "In 1970s Britain, a man drives from London to Bristol to investigate his brothers death, and the purpose of his trip is offset by his encounters with a series of odd people.",
-    "Genre":{
-      "Name": "Drama",
-      "Description": "Drama films are a genre that relies on the emotional and relational development of realistic characters. They often feature intense character development, and sometimes rely on tragedy to evoke an emotional response from the audience."
-    },
-    "Director": {
-      "Name": "Chris Petit",
-      "Bio": "Chris Petit is an English novelist and filmmaker. During the 1970's he was the film editor for Time Out and wrote for Melody Maker.",
-      "dateOfBirth": 1949
-    },
-    "Year": 1979,
-    "ImageURL": "https://www.themoviedb.org/t/p/w1280/jaKTAV3wuHRklubTFVPNgPOGeIs.jpg",
-    "Featured": false
-  },
-  {
-    "Title": "Vagabond",
-    "Description": "A young woman's body is found frozen in a ditch. Through flashbacks and interviews, we see the events that led to her inevitable death.",
-    "Genre": {
-      "Name": "Drama",
-      "Description": "Drama films are a genre that relies on the emotional and relational development of realistic characters. They often feature intense character development, and sometimes rely on tragedy to evoke an emotional response from the audience."
-    },
-    "Director": {
-      "Name": "Agnes Varda",
-      "Bio": "Agnes Varda was a Belgian-born French film director, screenwriter, photographer, and artist. Her pioneering work was central to the development of the widely influential French New Wave film movement of the 1950s and 1960s.",
-      "dateOfBirth": 1928,
-      "dateOfDeath": 2019
-      },
-      "Year": 1985,
-      "ImageURL": "https://www.themoviedb.org/t/p/w1280/2KFfwiPct1hwqi9dkKqoom0BenC.jpg",
-      "Featured": false
-  },
-  {
-    "Title": "Leningrad Cowboys Go America",
-    "Description": "Siberian rock band Leningrad Cowboys go to the USA in pursuit of fame.",
-    "Genre": {
-      "Name": "Comedy",
-      "Description": "A comedy film is a category of film which emphasizes humor. These films are designed to make the audience laugh through the amusement."
-    },
-    "Director": {
-      "Name": "Aki Kaurismäki",
-      "Bio": "Aki Kaurismäki is a Finnish film director and screenwriter. He has been described as Finland's best known film director.",
-      "dateOfBirth": 1957
-    },
-    "Year": 1989,
-    "ImageURL": "https://www.themoviedb.org/t/p/w1280/6lJj3w5ebOkrsNx6sJXyNuWDJIB.jpg",
-    "Featured": false
-  },
-];
-
 // CREATE
 app.post('/users', (req, res) => {
-  const newUser = req.body;
-
-  if(newUser.name) {
-    newUser.id = uuid.v4();
-    users.push(newUser);
-    res.status(201).json(newUser);
-  } else {
-    res.status(400).send('users need names');
-  }
+  Users.findOne({ Username: req.body.Username })
+    .then((user) => {
+      if (user) {
+        return res.status(400).send(req.body.Username + 'already exists');
+      } else {
+        Users
+          .create({
+            Username: req.body.Username,
+            Password: req.body.Password,
+            Email: req.body.Email,
+            Birthday: req.body.Birthday
+          })
+          .then((user) => {res.status(201).json(user) })
+        .catch((error) => {
+          console.error(error);
+          res.status(500).send('Error: ' + error);
+        })
+      }
+    })
+    .catch((error) => {
+      console.error(error);
+      res.status(500).send('Error: ' + error);
+    });
 });
 
 app.post('/users/:id/:movieTitle', (req, res) => {
@@ -183,7 +113,14 @@ app.get('/movies/directors/:directorName', (req, res) => {
 });
 
 app.get('/users', (req, res) => {
-  res.status(200).json(users);
+  Users.find()
+    .then((users) => {
+      res.status(201).json(users);
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).send('Error: ' + err);
+    });
 });
 
 // UPDATE
@@ -230,7 +167,7 @@ app.delete('/users/:id', (req, res) => {
 
 app.use((err, req, res, next) => {
   console.error(err.stack);
-  res.status(500).send('Something broke!');
+  res.status(500).send('Something broke! Error: ' + err);
 });
 
 app.listen(8080, () => {
