@@ -1,0 +1,5 @@
+{"_id":{"$oid":"6453bd7b6d2f24ff74724d24"},"Username":"danielOcean","favoriteMovies":[],"Birthday":{"$date":{"$numberLong":"-3976214400000"}},"Email":"georgeClooney@lasvegas.com"}
+{"_id":{"$oid":"6453c34f6d2f24ff74724d25"},"Username":"tylerDurden","Email":"fightclub@gmail.com","Birthday":{"$date":{"$numberLong":"-3976214400000"}},"favoriteMovies":[]}
+{"_id":{"$oid":"6453c42b6d2f24ff74724d26"},"Username":"the CodeMaster","Email":"stephenWeaver@gmail.com","Birthday":{"$date":{"$numberLong":"-3976214400000"}},"favoriteMovies":[]}
+{"_id":{"$oid":"6453c46f6d2f24ff74724d27"},"Username":"jamesBond","Email":"bond@mi6.gov.uk","Birthday":{"$date":{"$numberLong":"-3976214400000"}},"favoriteMovies":[]}
+{"_id":{"$oid":"6453c4b46d2f24ff74724d28"},"Username":"uncleRoger","Email":"fuyo@gmail.com","Birthday":{"$date":{"$numberLong":"-3976214400000"}},"favoriteMovies":[]}
