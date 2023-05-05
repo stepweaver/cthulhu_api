@@ -1,24 +1,26 @@
 const express = require('express'),
+  app = express(),
   mongoose = require('mongoose'),
   Models = require('./models.js'),
   morgan = require('morgan'),
   fs = require('fs'), // import built in node modules fs and path
   path = require('path');
   bodyParser = require('body-parser');
-  uuid = require('uuid'),
-  auth = require('./auth.js');
-
-  const Movies = Models.Movie;
-  const Users = Models.User;
+  uuid = require('uuid');
+  
+const Movies = Models.Movie;
+const Users = Models.User;
 
 mongoose.set('debug', true);
 
 mongoose.connect('mongodb://127.0.0.1:27017/cthulhuFlixDB', { useNewUrlParser: true, useUnifiedTopology: true });
 
-const app = express();
-// create a write stream (in append mode)
-// a 'log.txt' file is created in root directory
 const accessLogStream = fs.createWriteStream(path.join(__dirname, 'log.txt'), {flags: 'a'})
+
+let auth = require('./auth.js')(app);
+
+const passport = require('passport');
+require('./passport.js');
 
 // Middleware
 app.use(morgan('combined', {stream: accessLogStream})); // The 'combined' parameter specifies that requests should be logged using Morgan's "combined" format.
