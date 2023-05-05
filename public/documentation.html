@@ -34,20 +34,20 @@
       <td>A JSON object holding data about the new user to be added, structured like:
         <pre>
         {
-          "username": "username",
-          "password": "password",
-          "email": "email",
-          "birth": "MM/DD/YYYY"
+          "Username": "Username",
+          "Password": "Password",
+          "Email": "Email",
+          "Birthday": "YYYY-MM-DD"
         }
         </pre>
       </td>
       <td>A JSON object holding data about the new user created, structured like:
         <pre>
         {
-          "username": "username",
-          "password": "password",
-          "email": "email",
-          "birth": "MM/DD/YYY",
+          "Username": "Username",
+          "Password": "Password",
+          "Email": "Email",
+          "Birthday": "YYYY-MM-DD",
           "favoriteMovies": ["favoriteMovies"],
           "_id": "ObjectId"
         }
@@ -62,65 +62,67 @@
       <td>A JSON object holding data about ALL movies, structured like:
         <pre>
         {
-          "title": "title",
-          "year": "year",
-          "rating": "rating",
-          "description": "description",
-          "genre": {
-            "name": "name",
-            "description": "description"
-          },
-          "director": {
-            "name",
-            "bio",
-            "MM/DD/YYYY"
-          },
-          "actors": ["actors"],
-          "imageURL": "imageURL",
-          "featured": true/false
+          "_id": "ObjectId",
+          "Title": "Title",
+          "Description": "Description",
+          "releaseYear": "2001",
+          "Rating": "PG-13",
+          "Genre": {
+            "Name": "Name",
+            "Description": "Description"
+            },
+          "Director": {
+            "Name": "Name",
+            "Bio": "Bio",
+            "yearOfBirth": "YYYY"
+            },
+          "Actors": [ "Actors" ],
+          "Featured": true/false,
+          "imageURL": "imageURL"
         }
         </pre>
       </td>
     </tr>
     <tr>
       <td>Return data about a single movie, by title</td>
-      <td>/movies/:title</td>
+      <td>/movies/:Title</td>
       <td>GET</td>
       <td>None</td>
       <td>A JSON object holding data about a single movie, structured like:
         <pre>
         {
-          "title": "title",
-          "year": "year",
-          "rating": "rating",
-          "description": "description",
-          "genre": {
-            "name": "name",
-            "description": "description"
-          },
-          "director": {
-            "name": "name",
-            "bio": "bio",
-            "birth": "MM/DD/YYYY"
-          },
-          "imageURL": "imageURL",
-          "actors": ["actors"],
-          "featured": true/false
+          "_id": "ObjectId",
+          "Title": "Title",
+          "Description": "Description",
+          "releaseYear": "2001",
+          "Rating": "PG-13",
+          "Genre": {
+            "Name": "Name",
+            "Description": "Description"
+            },
+          "Director": {
+            "Name": "Name",
+            "Bio": "Bio",
+            "yearOfBirth": "YYYY"
+            },
+          "Actors": [ "Actors" ],
+          "Featured": true/false,
+          "imageURL": "imageURL"
         }
         </pre>
       </td>
     </tr>
     <tr>
       <td>Return data about a genre, by name</td>
-      <td>/movies/genres/:genreName</td>
+      <td>/movies/genres/:Name</td>
       <td>GET</td>
       <td>None</td>
       <td>A JSON object holding data about the genre category and a description, structure like:
         <pre>
         {
-          "genre": {
-            "name": "name",
-            "description": "description"
+          "Genre": {
+            "Name": "Name",
+            "Description": "Description"
           }
         }
         </pre>
@@ -128,16 +130,16 @@
     </tr>
     <tr>
       <td>Return data about a director, by name</td>
-      <td>/movies/directors/:directorName</td>
+      <td>/movies/directors/:Name</td>
       <td>GET</td>
       <td>None</td>
-      <td>A JSON object holding data about director - name, bio, and birthdate, structured like:
+      <td>A JSON object holding data about director - name, bio, and birth year, structured like:
         <pre>
         {
-          director: {
-            "name": "name",
-            "bio": "bio",
-            "birth": "MM/DD/YYYY"
+          Director: {
+            "Name": "Name",
+            "Bio": "Bio",
+            "yearOfBirth": "YYYY"
           }
         }
         </pre>
@@ -152,10 +154,10 @@
         <pre>
         {
           "_id": "ObjectId",
-          "username": "username",
-          "password": "password",
-          "birth": "MM/DD/YYYY",
-          "favoriteMovies": ["favoriteMovies"]
+          "Username": "Username",
+          "Password": "Password",
+          "Birthday": "YYYY-01-01",
+          "FavoriteMovies": ["FavoriteMovies"]
         }
         </pre>
       </td>
@@ -167,19 +169,19 @@
       <td>A JSON object holding data about the new user to register, structured like:
         <pre>
         {
-          "username": "username",
-          "password": "password",
-          "email": "email"
+          "Username": "Username",
+          "Password": "Password",
+          "Email": "Email"
         }
         </pre>
       </td>
       <td>A JSON object holding data about the new user registered, structured like:
         <pre>
         {
-          "username": "username",
-          "password": "password",
-          "email": "email",
-          "favoriteMovies": ["favoriteMovies"],
+          "Username": "Username",
+          "Password": "Password",
+          "Email": "Email",
+          "FavoriteMovies": ["FavoriteMovies"],
           "_id": "ObjectId"
         }
         </pre>
@@ -195,11 +197,11 @@
         {
         "user": {
           "_id": "ObjectId",
-          "username": "username",
-          "password": hashedPassword,
-          "email": "email",
-          "birth": "Date",
-          "favoriteMovies": ["favoriteMovies"]
+          "Username": "Username",
+          "Password": hashedPassword,
+          "Email": "Email",
+          "Birthday": "YYYY-MM-DD",
+          "FavoriteMovies": ["FavoriteMovies"]
           },
         "token": "JWT"
         }
@@ -207,52 +209,58 @@
       </td>
     </tr>
     <tr>
-      <td>Allow users to update their username</td>
-      <td>/users/:username</td>
+      <td>Allow users to update their user info (username, password, email)</td>
+      <td>/users/:Username</td>
       <td>PUT</td>
       <td>A JSON object holding data about the user's "name" to be updated, structured like:
         <pre>
         {
-          "username": "username"
+          "Username": "Username",
+          "Password": "Password",
+          "Email": "Email"
         }
         </pre>
       </td>
       <td>A JSON object holding data about the user's "name" updated, structured like:
+        <pre>
         {
           "_id": "ObjectId",
-          "username": "username",
-          "favoriteMovies": ["favoriteMovies"]
+          "Username": "Username",
+          "Password": "Password",
+          "Email": "Email",
+          "FavoriteMovies": ["FavoriteMovies"]
         }
+        </pre>
       </td>
     </tr>
     <tr>
       <td>Allow users to add a movie to their list of favorites</td>
-      <td>/users/:id/:movieTitle</td>
+      <td>/users/:Username/movies/:MovieId</td>
       <td>POST</td>
       <td>None</td>
       <td>A JSON object holding data about the user, structured like:
         <pre>
         {
           "_id": "ObjectId"
-          "username": "username"
+          "Username": "Username"
           "password": "password"
           "email": "email"
-          "favoriteMovies": ["favoriteMovies"]
+          "FavoriteMovies": ["FavoriteMovies"]
         }
         </pre>
       </td>
     </tr>
     <tr>
       <td>Allow users to remove a movie from their list</td>
-      <td>/users/:id/:movieTitle</td>
+      <td>/users/:Username/movies/:MovieId</td>
       <td>DELETE</td>
       <td>None</td>
-      <td>A text message indicating the movie has been deleted from the user's favoriteMovies
+      <td>A text message indicating the movie has been deleted from the user's FavoriteMovies
       </td>
     </tr>
     <tr>
-      <td>Allow existing users to deregister by username</td>
-      <td>/users/:username</td>
+      <td>Allow existing users to deregister by Username</td>
+      <td>/users/:Username</td>
       <td>DELETE</td>
       <td>None</td>
       <td>A text message indicating the user has been deregistered</td>
