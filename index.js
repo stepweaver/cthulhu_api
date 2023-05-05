@@ -5,7 +5,8 @@ const express = require('express'),
   fs = require('fs'), // import built in node modules fs and path
   path = require('path');
   bodyParser = require('body-parser');
-  uuid = require('uuid');
+  uuid = require('uuid'),
+  auth = require('./auth.js');
 
   const Movies = Models.Movie;
   const Users = Models.User;
