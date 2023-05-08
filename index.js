@@ -13,6 +13,10 @@ const express = require('express'),
   accessLogStream = fs.createWriteStream(path.join(__dirname, 'log.txt'), {flags: 'a'});
   cors = require('cors');
 
+
+// Client-side validation
+const { check, validationResult } = require('express-validator');
+
 // CORS Policy
 let allowedOrigins = ['http://localhost:8080']
 app.use(cors({
@@ -52,7 +56,19 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 // CREATE
-app.post('/users', (req, res) => {
+app.post('/users',
+  [
+    check('Username', 'Username is required').isLength({min: 5}),
+    check('Username', 'Username contains non alphanumeric characters - not allowed').isAlphanumeric(),
+    check('Password', 'Password is required').not().isEmpty(),
+    check('Email', 'Email does not appear to be valid').isEmail()
+  ], (req, res) => {
+
+  let errors = validationResult(req);
+
+  if (!errors.isEmpty()) { // if an error occurs, the rest of the code will not execute
+    return res.status(422).json({ errors: errors.array() });
+  }
   let hashedPassword = Users.hashPassword(req.body.Password);
   Users.findOne({ Username: req.body.Username })
     .then((user) => {
@@ -155,7 +171,21 @@ app.get('/users/:Username', passport.authenticate('jwt', { sessions: false }), (
 });
 
 // UPDATE
-app.put('/users/:Username', passport.authenticate('jwt', { sessions: false }), (req, res) => {
+app.put('/users/:Username', passport.authenticate('jwt', { sessions: false }), 
+  [
+    check('Username', 'Username is required').isLength({mind: 5}),
+    check('Username', 'Username contains non alphanumeric characters - not allowed').isAlphanumeric(),
+    check('Password', 'Password is required').not().isEmpty(),
+    check('Email', 'Email does not appear to be valid').isEmail()
+  ], (req, res) => {
+
+  let errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    return res.status(422).json({ errors: errors.array() });
+  }
+
+  let hashedPassword = Users.hasPassword(req.body.Password);
   Users.findOneAndUpdate({ Username: req.params.Username }, {
     $set: {
       Username: req.body.Username,
