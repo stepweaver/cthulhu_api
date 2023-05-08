@@ -318,3 +318,6 @@
 ::1 - - [08/May/2023:13:39:12 +0000] "GET /movies HTTP/1.1" 500 122 "-" "PostmanRuntime/7.32.2"
 ::1 - - [08/May/2023:13:43:11 +0000] "GET /movies HTTP/1.1" 500 68 "-" "PostmanRuntime/7.32.2"
 ::1 - - [08/May/2023:13:45:40 +0000] "GET /movies HTTP/1.1" 200 13329 "-" "PostmanRuntime/7.32.2"
+::1 - - [08/May/2023:13:50:00 +0000] "GET /movies HTTP/1.1" 401 - "-" "PostmanRuntime/7.32.2"
+::1 - - [08/May/2023:13:50:32 +0000] "GET /login HTTP/1.1" 404 144 "-" "PostmanRuntime/7.32.2"
+::1 - - [08/May/2023:13:51:08 +0000] "GET /login?Username=stich&Password=experiment626 HTTP/1.1" 404 144 "-" "PostmanRuntime/7.32.2"
