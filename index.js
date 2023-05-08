@@ -14,8 +14,9 @@ const express = require('express'),
   cors = require('cors');
 
 // CORS Policy
+// CORS Policy
 let allowedOrigins = ['http://localhost:8080']
-app.use((cors) => {
+app.use(cors({
   origin: (origin, callback) => {
     if(!origin) return callback(null, true);
     if(allowedOrigins.indexOf(origin) === -1){
@@ -24,7 +25,7 @@ app.use((cors) => {
     }
     return callback(null, true);
   }
-});
+}));
 
 // Import passport and the authentication modules
 const passport = require('passport');
@@ -53,6 +54,7 @@ app.use(passport.session());
 
 // CREATE
 app.post('/users', (req, res) => {
+  let hashedPassword = Users.hashPassword(req.body.Password);
   Users.findOne({ Username: req.body.Username })
     .then((user) => {
       if (user) {
@@ -61,15 +63,15 @@ app.post('/users', (req, res) => {
         Users
           .create({
             Username: req.body.Username,
-            Password: req.body.Password,
+            Password: hashedPassword,
             Email: req.body.Email,
             Birthday: req.body.Birthday
           })
           .then((user) => {res.status(201).json(user) })
-        .catch((error) => {
-          console.error(error);
-          res.status(500).send('Error: ' + error);
-        })
+          .catch((error) => {
+            console.error(error);
+            res.status(500).send('Error: ' + error);
+          });
       }
     })
     .catch((error) => {
