@@ -7,20 +7,34 @@ const express = require('express'),
   path = require('path');
   bodyParser = require('body-parser');
   uuid = require('uuid');
+  session = require('express-session');
+  Movies = Models.Movie;
+  Users = Models.User;
+  accessLogStream = fs.createWriteStream(path.join(__dirname, 'log.txt'), {flags: 'a'});
+
+// Import passport and the authentication modules
+const passport = require('passport');
+  auth = require('./auth.js')(app);
+  require('./passport.js');
+
+  passport.serializeUser(function(user, done) {
+    done(null, user);
+  });
   
-const Movies = Models.Movie;
-const Users = Models.User;
+  passport.deserializeUser(function(user, done) {
+    done(null, user);
+  });
 
+// Connect to the database
 mongoose.set('debug', true);
-
 mongoose.connect('mongodb://127.0.0.1:27017/cthulhuFlixDB', { useNewUrlParser: true, useUnifiedTopology: true });
 
-const accessLogStream = fs.createWriteStream(path.join(__dirname, 'log.txt'), {flags: 'a'})
-
-let auth = require('./auth.js')(app);
-
-const passport = require('passport');
-require('./passport.js');
+// Configure express-session middleware
+app.use(session({
+  secret: 'a secret key should not be shared',
+  resave: false,
+  saveUninitialized: false
+}));
 
 // Middleware
 app.use(morgan('combined', {stream: accessLogStream})); // The 'combined' parameter specifies that requests should be logged using Morgan's "combined" format.
@@ -28,6 +42,8 @@ app.use(express.static('public'));
 app.use(morgan('combined'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(passport.initialize());
+app.use(passport.session());
 
 // CREATE
 app.post('/users', (req, res) => {
@@ -80,7 +96,7 @@ app.get('/documentation.html', (req, res) => {
   res.sendFile('documentation.html', { root: 'public' });
 });
 
-app.get('/movies', (req, res) => {
+app.get('/movies', passport.authenticate('jwt', { sessions: false }), (req, res) => {
   Movies.find()
     .then((movies) => {
       res.status(200).json(movies);
