@@ -17,14 +17,6 @@ const passport = require('passport');
   auth = require('./auth.js')(app);
   require('./passport.js');
 
-  passport.serializeUser(function(user, done) {
-    done(null, user);
-  });
-  
-  passport.deserializeUser(function(user, done) {
-    done(null, user);
-  });
-
 // Connect to the database
 mongoose.set('debug', true);
 mongoose.connect('mongodb://127.0.0.1:27017/cthulhuFlixDB', { useNewUrlParser: true, useUnifiedTopology: true });
