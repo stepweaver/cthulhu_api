@@ -14,7 +14,6 @@ const express = require('express'),
   cors = require('cors');
 
 // CORS Policy
-// CORS Policy
 let allowedOrigins = ['http://localhost:8080']
 app.use(cors({
   origin: (origin, callback) => {
