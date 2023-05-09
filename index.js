@@ -18,7 +18,7 @@ const express = require('express'),
 const { check, validationResult } = require('express-validator');
 
 // CORS Policy
-let allowedOrigins = ['*']
+let allowedOrigins = ['http://localhost:8080']
 app.use(cors({
   origin: (origin, callback) => {
     if(!origin) return callback(null, true);
