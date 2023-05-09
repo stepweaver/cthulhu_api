@@ -37,7 +37,7 @@ const passport = require('passport');
 
 // Connect to the database
 mongoose.set('debug', true);
-mongoose.connect(process.env.CONNECTION_URI, { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect('mongodb+srv://weaverst:rGbSYhf636hdcVrz@cthulhuflix.0grural.mongodb.net/CthulhuFlixDB?retryWrites=true&w=majority', { useNewUrlParser: true, useUnifiedTopology: true });
 
 // Configure express-session middleware
 app.use(session({
