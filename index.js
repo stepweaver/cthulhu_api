@@ -37,7 +37,7 @@ const passport = require('passport');
 
 // Connect to the database
 mongoose.set('debug', true);
-mongoose.connect('mongodb://127.0.0.0:27017/cthulhuFlixDB', { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect('mongodb://127.0.0.1:27017/cthulhuFlixDB', { useNewUrlParser: true, useUnifiedTopology: true });
 
 // Configure express-session middleware
 app.use(session({
@@ -253,7 +253,6 @@ app.use((err, req, res, next) => {
   res.status(500).send('Something broke! Error: ' + err);
 });
 
-const port = process.env.PORT || 8080;
-app.listen(port, '0.0.0.0', () => {
-  console.log('Listening on Port ' + port);
+app.listen(8080, () => {
+  console.log('Your app is listening on port 8080.');
 });
