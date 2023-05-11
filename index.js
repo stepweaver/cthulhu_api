@@ -11,24 +11,25 @@ const express = require('express'),
   Movies = Models.Movie;
   Users = Models.User;
   accessLogStream = fs.createWriteStream(path.join(__dirname, 'log.txt'), {flags: 'a'});
-  cors = require('cors');
 
+// CORS Policy
+const cors = require('cors');
 
 // Client-side validation
 const { check, validationResult } = require('express-validator');
 
-// CORS Policy
-let allowedOrigins = ['http://localhost:8080']
-app.use(cors({
-  origin: (origin, callback) => {
-    if(!origin) return callback(null, true);
-    if(allowedOrigins.indexOf(origin) === -1){
-      let message = 'The CORS policy for this application doesn\'t allow access from origin ' + origin;
-      return callback(new Error(message ), false);
+let allowedOrigins = ['http://localhost:8080', 'http://cthulhuflix.onrender.com'];
+
+  app.use(cors({
+    origin: (origin, callback) => {
+      if(!origin) return callback(null, true);
+      if(allowedOrigins.indexOf(origin) === -1){
+        let message = 'The CORS policy for this application doesn\'t allow access from origin ' + origin;
+        return callback(new Error(message ), false);
+      }
+      return callback(null, true);
     }
-    return callback(null, true);
-  }
-}));
+  }));
 
 // Import passport and the authentication modules
 const passport = require('passport');
@@ -37,7 +38,8 @@ const passport = require('passport');
 
 // Connect to the database
 mongoose.set('debug', true);
-mongoose.connect('mongodb://127.0.0.1:27017/cthulhuFlixDB', { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect(process.env.CONNECTION_URI, { useNewUrlParser: true, useUnifiedTopology: true });
+// mongoose.connect('mongodb://127.0.0.1:27017/cthulhuFlixDB', { useNewUrlParser: true, useUnifiedTopology: true });
 
 // Configure express-session middleware
 app.use(session({
@@ -57,23 +59,24 @@ app.use(passport.session());
 
 // CREATE
 app.post('/users',
-  [
-    check('Username', 'Username is required').isLength({min: 5}),
-    check('Username', 'Username contains non alphanumeric characters - not allowed').isAlphanumeric(),
-    check('Password', 'Password is required').not().isEmpty(),
-    check('Email', 'Email does not appear to be valid').isEmail()
-  ], (req, res) => {
-
+[
+  check('Username', 'Username is required').isLength({min: 5}),
+  check('Username', 'Username contains non alphanumeric characters - not allowed').isAlphanumeric(),
+  check('Password', 'Password is required').not().isEmpty(),
+  check('Password').isLength({min: 6}),
+  check('Email', 'Email does not appear valid').isEmail()
+], (req, res) => {
   let errors = validationResult(req);
 
-  if (!errors.isEmpty()) { // if an error occurs, the rest of the code will not execute
+  if (!errors.isEmpty()) {
     return res.status(422).json({ errors: errors.array() });
   }
-  let hashedPassword = Users.hashPassword(req.body.Password);
+
+  let hashedPassword = Users.hashedPassword(req.body.Password);
   Users.findOne({ Username: req.body.Username })
     .then((user) => {
       if (user) {
-        return res.status(400).send(req.body.Username + 'already exists');
+        return res.status(400).send(req.body.Username + ' already exists');
       } else {
         Users
           .create({
@@ -82,16 +85,16 @@ app.post('/users',
             Email: req.body.Email,
             Birthday: req.body.Birthday
           })
-          .then((user) => {res.status(201).json(user) })
-          .catch((error) => {
-            console.error(error);
-            res.status(500).send('Error: ' + error);
+          .then((user) => { res.status(201).json(user) })
+          .catch((e) => {
+            console.error(e);
+            res.status(500).send('Error: ' + e);
           });
       }
     })
-    .catch((error) => {
-      console.error(error);
-      res.status(500).send('Error: ' + error);
+    .catch((e) => {
+      console.error(e);
+      res.status(500).send('Error: ' + e);
     });
 });
 
@@ -173,19 +176,12 @@ app.get('/users/:Username', passport.authenticate('jwt', { sessions: false }), (
 // UPDATE
 app.put('/users/:Username', passport.authenticate('jwt', { sessions: false }), 
   [
-    check('Username', 'Username is required').isLength({mind: 5}),
+    check('Username').isLength({min: 5}),
     check('Username', 'Username contains non alphanumeric characters - not allowed').isAlphanumeric(),
+    check('Password').isLength({min: 6}),
     check('Password', 'Password is required').not().isEmpty(),
-    check('Email', 'Email does not appear to be valid').isEmail()
+    check('Email', 'Email does not appear valid').isEmail()
   ], (req, res) => {
-
-  let errors = validationResult(req);
-
-  if (!errors.isEmpty()) {
-    return res.status(422).json({ errors: errors.array() });
-  }
-
-  let hashedPassword = Users.hasPassword(req.body.Password);
   Users.findOneAndUpdate({ Username: req.params.Username }, {
     $set: {
       Username: req.body.Username,
@@ -253,6 +249,7 @@ app.use((err, req, res, next) => {
   res.status(500).send('Something broke! Error: ' + err);
 });
 
-app.listen(8080, () => {
-  console.log('Your app is listening on port 8080.');
+const port = process.env.PORT || 8080;
+app.listen(port, '0.0.0.0',() => {
+  console.log('Listening on Port ' + port);
 });
