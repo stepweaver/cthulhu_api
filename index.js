@@ -11,6 +11,7 @@ const express = require('express'),
   Movies = Models.Movie;
   Users = Models.User;
   accessLogStream = fs.createWriteStream(path.join(__dirname, 'log.txt'), {flags: 'a'});
+  require('dotenv').config({ path: 'CONNECTION_URI' });
 
 // CORS Policy
 const cors = require('cors');
