@@ -38,6 +38,7 @@ const passport = require('passport');
 
 // Connect to the database
 mongoose.set('debug', true);
+console.log(process.env.CONNECTION_URI)
 mongoose.connect( process.env.CONNECTION_URI, { useNewUrlParser: true, useUnifiedTopology: true });
 // mongoose.connect('mongodb://127.0.0.1:27017/cthulhuFlixDB', { useNewUrlParser: true, useUnifiedTopology: true });
 
