@@ -28,7 +28,7 @@ let userSchema = mongoose.Schema({
   FavoriteMovies: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Movie' }] // Rather than the FavoriteMovies key containing an array of IDs for movie documents, the FavoriteMovies key could contain an array of actual movie documents, all embedded within each user document.
 });
 
-userSchema.statics.hashPassword = (password) => {
+userSchema.statics.hashedPassword = (password) => {
   return bcrypt.hashSync(password, 10);
 };
 
