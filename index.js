@@ -11,7 +11,6 @@ const express = require('express'),
   Movies = Models.Movie;
   Users = Models.User;
   accessLogStream = fs.createWriteStream(path.join(__dirname, 'log.txt'), {flags: 'a'});
-  require('dotenv').config({ path: 'CONNECTION_URI' });
 
 // CORS Policy
 const cors = require('cors');
@@ -39,7 +38,7 @@ const passport = require('passport');
 
 // Connect to the database
 mongoose.set('debug', true);
-mongoose.connect(process.env.CONNECTION_URI, { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect( process.env.CTHULHUFLIXDB_URI, { useNewUrlParser: true, useUnifiedTopology: true });
 // mongoose.connect('mongodb://127.0.0.1:27017/cthulhuFlixDB', { useNewUrlParser: true, useUnifiedTopology: true });
 
 // Configure express-session middleware
