@@ -1,16 +1,16 @@
-const express = require('express'),
-  app = express(),
-  mongoose = require('mongoose'),
-  Models = require('./models.js'),
-  morgan = require('morgan'),
-  fs = require('fs'), // import built in node modules fs and path
-  path = require('path');
-  bodyParser = require('body-parser');
-  uuid = require('uuid');
-  session = require('express-session');
-  Movies = Models.Movie;
-  Users = Models.User;
-  accessLogStream = fs.createWriteStream(path.join(__dirname, 'log.txt'), {flags: 'a'});
+const express = require('express');
+const app = express();
+const mongoose = require('mongoose');
+const Models = require('./models.js');
+const morgan = require('morgan');
+const fs = require('fs'); // import built in node modules fs and path
+const path = require('path');
+const bodyParser = require('body-parser');
+const uuid = require('uuid');
+const session = require('express-session');
+const Movies = Models.Movie;
+const Users = Models.User;
+const accessLogStream = fs.createWriteStream(path.join(__dirname, 'log.txt'), {flags: 'a'});
 
 // CORS Policy
 const cors = require('cors');
@@ -18,35 +18,46 @@ const cors = require('cors');
 // Client-side validation
 const { check, validationResult } = require('express-validator');
 
-let allowedOrigins = ['http://localhost:8080', 'http://cthulhuflix.onrender.com'];
+let allowedOrigins = ['http://localhost:8080', 'https://cthulhuflix.herokuapp.com'];
 
-  app.use(cors({
-    origin: (origin, callback) => {
-      if(!origin) return callback(null, true);
-      if(allowedOrigins.indexOf(origin) === -1){
+app.use(cors({
+  origin: (origin) => {
+    return new Promise((resolve, reject) => {
+      if (!origin) return resolve(true);
+      if (allowedOrigins.indexOf(origin) === -1) {
         let message = 'The CORS policy for this application doesn\'t allow access from origin ' + origin;
-        return callback(new Error(message ), false);
+        return reject(new Error(message));
       }
-      return callback(null, true);
-    }
-  }));
+      return resolve(true);
+    });
+  },
+}));
 
 // Import passport and the authentication modules
 const passport = require('passport');
-  auth = require('./auth.js')(app);
-  require('./passport.js');
+let auth = require('./auth.js')(app);
+require('./passport.js');
 
 // Connect to the database
 mongoose.set('debug', true);
-mongoose.connect('mongodb+srv://weaverst:jc0rtP3HyIkxMwr4@cthulhuflix.0grural.mongodb.net/CthulhuFlixDB?retryWrites=true&w=majority', { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect('mongodb+srv://weaverst:cJfPtLVDT6QhMRlV@cthulhuflixdb.94xm3vq.mongodb.net/cthulhuFlixDB?retryWrites=true&w=majority', {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+}).then(() => {
+  console.log('Connected to cthulhuFlixDB');
+}).catch((e) => {
+  console.error('Error connecting to cthulhuFlixDB', e);
+});
 // mongoose.connect('mongodb://127.0.0.1:27017/cthulhuFlixDB', { useNewUrlParser: true, useUnifiedTopology: true });
 
 // Configure express-session middleware
-app.use(session({
-  secret: 'a secret key should not be shared',
-  resave: false,
-  saveUninitialized: false
-}));
+app.use(
+  session({
+    secret: 'a secret key should not be shared',
+    resave: false,
+    saveUninitialized: false
+  })
+);
 
 // Middleware
 app.use(morgan('combined', {stream: accessLogStream})); // The 'combined' parameter specifies that requests should be logged using Morgan's "combined" format.
@@ -58,28 +69,28 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 // CREATE
-app.post('/users',
-[
-  check('Username', 'Username is required').isLength({min: 5}),
-  check('Username', 'Username contains non alphanumeric characters - not allowed').isAlphanumeric(),
-  check('Password', 'Password is required').not().isEmpty(),
-  check('Password').isLength({min: 6}),
-  check('Email', 'Email does not appear valid').isEmail()
-], (req, res) => {
-  let errors = validationResult(req);
+app.post(
+  '/users',
+  [
+    check('Username', 'Username is required').isLength({min: 5}),
+    check('Username', 'Username contains non alphanumeric characters - not allowed').isAlphanumeric(),
+    check('Password', 'Password is required').not().isEmpty(),
+    check('Password').isLength({min: 6}),
+    check('Email', 'Email does not appear valid').isEmail()
+  ], (req, res) => {
+    let errors = validationResult(req);
 
-  if (!errors.isEmpty()) {
-    return res.status(422).json({ errors: errors.array() });
-  }
+    if (!errors.isEmpty()) {
+      return res.status(422).json({ errors: errors.array() });
+    }
 
-  let hashedPassword = Users.hashPassword(req.body.Password);
-  Users.findOne({ Username: req.body.Username })
-    .then((user) => {
-      if (user) {
-        return res.status(400).send(req.body.Username + ' already exists');
-      } else {
-        Users
-          .create({
+    let hashedPassword = Users.hashPassword(req.body.Password);
+    Users.findOne({ Username: req.body.Username })
+      .then((user) => {
+        if (user) {
+          return res.status(400).send(req.body.Username + ' already exists');
+        } else {
+          Users.create({
             Username: req.body.Username,
             Password: hashedPassword,
             Email: req.body.Email,
