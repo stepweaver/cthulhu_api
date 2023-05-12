@@ -16,27 +16,30 @@ let generateJWTToken = (user) => {
 
 /* POST login*/
 module.exports = (router) => {
-  router.post('/login', async (req, res) => {
-    try {
-      const [user, info] = await util.promisify(passport.authenticate('local', { session: false }))(req, res);
-      if (!user) {
-        return res.status(400).json({
-          message: 'Something is not right',
-          user: user
-        });
-      }
-      req.login(user, { session: false }, async (error) => {
-        if (error) {
-          res.send(error);
+  router.post('/login', (req, res) => {
+    return new Promise((resolve, reject) => {
+      passport.authenticate('local', { session: false }, async (err, user, info) => {
+        try {
+          if (err || !user) {
+            return reject({ status: 400, message: 'Something is not right', user: user });
+          }
+          req.login(user, { session: false }, async (error) => {
+            if (error) {
+              return reject({ status: 400, message: 'Something is not right', error: error.message });
+            }
+            let token = generateJWTToken(user.toJSON());
+            return resolve({ status: 200, data: { user, token } });
+          });
+        } catch (error) {
+          return reject({ status: 400, message: 'Something is not right', error: error.message });
         }
-        let token = generateJWTToken(user.toJSON());
-        return res.json({ user, token });
+      })(req, res);
+    })
+      .then(response => {
+        return res.status(response.status).json(response.data);
+      })
+      .catch(error => {
+        return res.status(error.status).json({ message: error.message, error: error.error });
       });
-    } catch (error) {
-      return res.status(400).json({
-        message: 'Something is not right',
-        error: error.message
-      });
-    }
   });
 };
