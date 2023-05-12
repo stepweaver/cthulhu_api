@@ -14,7 +14,6 @@ const express = require('express'),
 
 // CORS Policy
 const cors = require('cors');
-// test
 
 // Client-side validation
 const { check, validationResult } = require('express-validator');
@@ -38,11 +37,8 @@ const passport = require('passport');
   require('./passport.js');
 
 // Connect to the database
-const uri = 'mongodb+srv://weaverst:cJfPtLVDT6QhMRlV@cthulhuflixdb.94xm3vq.mongodb.net/cthulhuFlixDB?retryWrites=true&w=majority';
 mongoose.set('debug', true);
-mongoose.connect( uri, { useNewUrlParser: true, useUnifiedTopology: true } )
-  .then(() => console.log('Connected to cthulhuFlixDB'))
-  .catch(e => console.e('Error connecting to cthulhuFlixDB', e));
+mongoose.connect( 'mongodb+srv://weaverst:cJfPtLVDT6QhMRlV@cthulhuflixdb.94xm3vq.mongodb.net/cthulhuFlixDB?retryWrites=true&w=majority', { useNewUrlParser: true, useUnifiedTopology: true } );
 // mongoose.connect('mongodb://127.0.0.1:27017/cthulhuFlixDB', { useNewUrlParser: true, useUnifiedTopology: true });
 
 // Configure express-session middleware
