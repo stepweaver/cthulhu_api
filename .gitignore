@@ -1,3 +1,5 @@
 node_modules
 movies.json
 users.json
+.env
+.txt
