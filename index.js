@@ -35,12 +35,12 @@ app.use(cors({
 
 // Import passport and the authentication modules
 const passport = require('passport');
-const auth = require('./auth.js')(app);
+let auth = require('./auth.js')(app);
 require('./passport.js');
 
 // Connect to the database
 mongoose.set('debug', true);
-mongoose.connect('mongodb+srv://weaverst:cJfPtLVDT6QhMRlV@cthulhuflixdb.94xm3vq.mongodb.net/cthulhuFlixDB?retryWrites=true&w=majority', {
+mongoose.connect(process.env.CONNECTION_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true
 }).then(() => {
