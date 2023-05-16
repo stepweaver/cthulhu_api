@@ -2,6 +2,8 @@ const express = require('express');
 const morgan = require('morgan');
 const fs = require('fs'); // import built in node modules fs and path
 const path = require('path');
+const bodyParser = require('body-parser');
+uuid = require('uuid');
 
 const app = express();
 // create a write stream (in append mode)
@@ -11,6 +13,25 @@ const accessLogStream = fs.createWriteStream(path.join(__dirname, 'log.txt'), {f
 // Middleware
 app.use(morgan('combined', {stream: accessLogStream})); // The 'combined' parameter specifies that requests should be logged using Morgan's "combined" format.
 app.use(express.static('public'));
+app.use(bodyParser.json());
+
+let users = [
+  {
+    id: 1,
+    name: 'davidrmcintyre',
+    favoriteMovies: []
+  },
+  {
+    id: 2,
+    name: 'smgruber',
+    favoriteMovies: []
+  },
+  {
+    id: 3,
+    name: 'deleteme',
+    favoriteMovies: ['Locke']
+  }
+];
 
 let movies = [
   {
@@ -246,6 +267,8 @@ let movies = [
       "Featured": false
   }
 ];
+
+
 
 app.get('/', (req, res) => {
   res.send('Welcome to CthulhuFlix!');
