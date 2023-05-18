@@ -14,6 +14,7 @@ const accessLogStream = fs.createWriteStream(path.join(__dirname, 'log.txt'), {f
 app.use(morgan('combined', {stream: accessLogStream})); // The 'combined' parameter specifies that requests should be logged using Morgan's "combined" format.
 app.use(express.static('public'));
 app.use(bodyParser.json());
+app.use(morgan('combined'));
 
 let users = [
   {
@@ -268,7 +269,31 @@ let movies = [
   }
 ];
 
+// CREATE
+app.post('/users', (req, res) => {
+  const newUser = req.body;
 
+  if(newUser.name) {
+    newUser.id = uuid.v4();
+    users.push(newUser);
+    res.status(201).json(newUser);
+  } else {
+    res.status(400).send('users need names');
+  }
+});
+
+app.post('/users/:id/:movieTitle', (req, res) => {
+  const { id, movieTitle } = req.params;
+
+  let user = users.find( user => user.id == id );
+
+  if (user) {
+    user.favoriteMovies.push(movieTitle);
+    res.status(200).send(`${movieTitle} has been added to ${user.name}'s favorites`);
+  } else {
+    res.status(400).send('No such user');
+  }
+});
 
 app.get('/', (req, res) => {
   res.send('Welcome to CthulhuFlix!');
