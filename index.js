@@ -1,15 +1,16 @@
 const express = require('express'),
       mongoose = require('mongoose'),
-      Models = require('./models');
       morgan = require('morgan'),
       fs = require('fs'), // import built in node modules fs and path
       path = require('path'),
       bodyParser = require('body-parser'),
-      uuid = require('uuid'),
-      Movies = Models.Movie,
-      Users = Models.User;
+      uuid = require('uuid');
 
-mongoose.connect('mongodb://localhost:27017/cthulhuFlixDB', { userNewUrlParser: true, useUnifiedTopology: true });
+const { Movie, User } = require('./models');
+const Movies = Movie;
+const Users = User;
+
+mongoose.connect('mongodb://localhost:27017/cthulhuFlixDB', { useNewUrlParser: true, useUnifiedTopology: true });
 
 const app = express();
 // create a write stream (in append mode)
