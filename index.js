@@ -1,18 +1,13 @@
 const express = require('express'),
+      app = express(),
+      bodyParser = require('body-parser'),
+      uuid = require('uuid'),
       mongoose = require('mongoose'),
       morgan = require('morgan'),
       fs = require('fs'), // import built in node modules fs and path
-      path = require('path'),
-      bodyParser = require('body-parser'),
-      uuid = require('uuid');
-
-const { Movie, User } = require('./models');
-const Movies = Movie;
-const Users = User;
-
+      path = require('path');
+      
 mongoose.connect('mongodb://localhost:27017/cthulhuFlixDB', { useNewUrlParser: true, useUnifiedTopology: true });
-
-const app = express();
 // create a write stream (in append mode)
 // a 'log.txt' file is created in root directory
 const accessLogStream = fs.createWriteStream(path.join(__dirname, 'log.txt'), {flags: 'a'})
