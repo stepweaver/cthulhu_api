@@ -65,8 +65,8 @@
           "_id": "ObjectId",
           "Title": "Title",
           "Description": "Description",
-          "releaseYear": "2001",
-          "Rating": "PG-13",
+          "releaseYear": "YYYY",
+          "Rating": "Rating",
           "Genre": {
             "Name": "Name",
             "Description": "Description"
@@ -85,7 +85,7 @@
     </tr>
     <tr>
       <td>Return data about a single movie, by title</td>
-      <td>/movies/:Title</td>
+      <td>/movies/:title</td>
       <td>GET</td>
       <td>None</td>
       <td>A JSON object holding data about a single movie, structured like:
@@ -94,8 +94,8 @@
           "_id": "ObjectId",
           "Title": "Title",
           "Description": "Description",
-          "releaseYear": "2001",
-          "Rating": "PG-13",
+          "releaseYear": "YYYY",
+          "Rating": "Rating",
           "Genre": {
             "Name": "Name",
             "Description": "Description"
@@ -114,7 +114,7 @@
     </tr>
     <tr>
       <td>Return data about a genre, by name</td>
-      <td>/movies/genres/:Name</td>
+      <td>/movies/genres/:genreName</td>
       <td>GET</td>
       <td>None</td>
       <td>A JSON object holding data about the genre category and a description, structure like:
@@ -130,7 +130,7 @@
     </tr>
     <tr>
       <td>Return data about a director, by name</td>
-      <td>/movies/directors/:Name</td>
+      <td>/movies/directors/:directorName</td>
       <td>GET</td>
       <td>None</td>
       <td>A JSON object holding data about director - name, bio, and birth year, structured like:
@@ -156,7 +156,7 @@
           "_id": "ObjectId",
           "Username": "Username",
           "Password": "Password",
-          "Birthday": "YYYY-01-01",
+          "Birthday": "YYYY-MM-DD",
           "FavoriteMovies": []
         }
         </pre>
@@ -185,7 +185,7 @@
     </tr>
     <tr>
       <td>Allow users to update their user info (username, password, email)</td>
-      <td>/users/:Username</td>
+      <td>/users/:id</td>
       <td>PUT</td>
       <td>A JSON object holding data about the user's "name" to be updated, structured like:
         <pre>

@@ -103,6 +103,7 @@ app.post('/users', (req, res) => {
 
   if(newUser.Username) {
     newUser.id = uuid.v4();
+    newUser.FavoriteMovies = [];
     users.push(newUser);
     res.status(201).json(newUser);
   } else {
@@ -129,7 +130,7 @@ app.get('/', (req, res) => {
 });
 
 app.get('/documentation', (req, res) => {
-  res.send('This is a secret url with super top-secret content.');
+  res.sendFile(path.join(__dirname, 'public', 'documentation.html'));;
 });
 
 app.get('/movies', (req, res) => {
@@ -137,8 +138,15 @@ app.get('/movies', (req, res) => {
 });
 
 app.get('/users/:username', (req, res) => {
-  
-})
+  const { username } = req.params;
+  const user = users.find(user => user.Username === username);
+
+  if (user) {
+    res.status(200).json(user);
+  } else {
+    res.status(404).send('User not found');
+  }
+});
 
 app.get('/movies/:title', (req, res) => {
   const { title } = req.params;
@@ -153,7 +161,7 @@ app.get('/movies/:title', (req, res) => {
 
 app.get('/movies/genres/:genreName', (req, res) => {
   const { genreName } = req.params;
-  const genre = movies.find( movie => movie.Genre.Name === genreName ).Genre;
+  const genre = movies.find( movie => movie.Genre.Name === genreName )?.Genre;
 
   if (genre) {
     res.status(200).json(genre);
@@ -164,7 +172,7 @@ app.get('/movies/genres/:genreName', (req, res) => {
 
 app.get('/movies/directors/:directorName', (req, res) => {
   const { directorName } = req.params;
-  const director = movies.find( movie => movie.Director.Name === directorName ).Director;
+  const director = movies.find( movie => movie.Director.Name === directorName )?.Director;
 
   if (director) {
     res.status(200).json(director);
