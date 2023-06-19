@@ -1,10 +1,10 @@
 const express = require('express'),
-    app = express(),
-    bodyParser = require('body-parser'),
-    uuid = require('uuid'),
-    morgan = require('morgan'),
-    fs = require('fs'), // import built in node modules fs and path
-    path = require('path');
+  app = express(),
+  bodyParser = require('body-parser'),
+  uuid = require('uuid'),
+  morgan = require('morgan'),
+  fs = require('fs'), // import built in node modules fs and path
+  path = require('path');
 
 // create a write stream (in append mode)
 // a 'log.txt' file is created in root directory
@@ -16,11 +16,6 @@ app.use(express.static('public'));
 app.use(bodyParser.json());
 app.use(morgan('combined'));
 app.use(bodyParser.urlencoded({ extended: true }));
-
-let auth = require('./auth')(app);
-
-const passport = require('passport');
-require('./passport');
 
 let users = [
   {
