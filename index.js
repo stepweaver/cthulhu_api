@@ -1,9 +1,27 @@
 const express = require('express'),
-  app = express(),
+  morgan = require('morgan'),
+  fs = require('fs'),
+  path = require('path'),
   bodyParser = require('body-parser'),
-  uuid = require('uuid');
+  uuid = require('uuid'),
+  mongoose = require('mongoose'),
+  Models = require('./models');
 
+const Movies = Models.Movie;
+const Users = Models.User;
+
+mongoose.connect('mongodb://127.0.0.1:27017/cthulhuFlixDB', { useNewUrlParser: true, useUnifiedTopology: true });
+
+const app = express();
+
+const accessLogStream = fs.createWriteStream(path.join(__dirname, 'log.txt'), {flags: 'a'})
+
+// Middleware
+app.use(morgan('combined')); // The 'combined' parameter specifies that requests should be logged using Morgan's "common" format.
+app.use(express.static('public'));
+app.use(morgan('combined'));
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 let users = [
   {
