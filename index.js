@@ -22,7 +22,11 @@ app.use(express.static('public'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// CREATE
+let auth = require('./auth')(app);
+
+const passport = require('passport');
+require('./passport');
+
 // CREATE
 app.post('/users', (req, res) => {
   Users.findOne({ Username: req.body.Username })
