@@ -1,4 +1,5 @@
-const mongoose = require('mongoose');
+const mongoose = require('mongoose'),
+  bcrypt = require('bcrypt');
 
 let movieSchema = mongoose.Schema({
   Title: {type: String, required: true},
@@ -26,6 +27,14 @@ let userSchema = mongoose.Schema({
   Birthday: Date,
   FavoriteMovies: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Movie' }] // Rather than the FavoriteMovies key containing an array of IDs for movie documents, the FavoriteMovies key could contain an array of actual movie documents, all embedded within each user document.
 });
+
+userSchema.statics.hashPassword = (password) => {
+  return bcrypt.hashSync(password, 10);
+};
+
+userSchema.methods.validatePassword = function(password) {
+  return bcrypt.compareSync(password, this.Password);
+};
 
 let Movie = mongoose.model('Movie', movieSchema);
 let User = mongoose.model('User', userSchema);
