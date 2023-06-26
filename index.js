@@ -1,4 +1,5 @@
 const express = require('express'),
+  app = express(),
   morgan = require('morgan'),
   fs = require('fs'),
   path = require('path'),
@@ -12,9 +13,22 @@ const Users = Models.User;
 
 mongoose.connect('mongodb://127.0.0.1:27017/cthulhuFlixDB', { useNewUrlParser: true, useUnifiedTopology: true });
 
-const app = express();
-
 const accessLogStream = fs.createWriteStream(path.join(__dirname, 'log.txt'), {flags: 'a'})
+
+const cors = require('cors');
+
+let allowedOrigins = ['http://localhost:8080'];
+
+app.use(cors({
+  origin: (origin, callback) => {
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.indexOf(origin) === -1) {
+      let message = 'The CORS policy for this application doesn\'t allow access from origin ' + origin;
+      return callback(new Error(message), false);
+    }
+    return callback(null, true);
+  }
+}));
 
 // Middleware
 app.use(morgan('combined')); // The 'combined' parameter specifies that requests should be logged using Morgan's "common" format.
