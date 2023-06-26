@@ -6,16 +6,15 @@ const express = require('express'),
   bodyParser = require('body-parser'),
   uuid = require('uuid'),
   mongoose = require('mongoose'),
-  Models = require('./models');
-
-const Movies = Models.Movie;
-const Users = Models.User;
+  cors = require('cors');
+  
+const Models = require('./models'),
+  Movies = Models.Movie,
+  Users = Models.User;
 
 mongoose.connect('mongodb://127.0.0.1:27017/cthulhuFlixDB', { useNewUrlParser: true, useUnifiedTopology: true });
 
 const accessLogStream = fs.createWriteStream(path.join(__dirname, 'log.txt'), {flags: 'a'})
-
-const cors = require('cors');
 
 let allowedOrigins = ['http://localhost:8080'];
 
