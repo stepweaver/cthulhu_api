@@ -12,7 +12,7 @@ const Models = require('./models'),
   Movies = Models.Movie,
   Users = Models.User;
 
-mongoose.connect(CTHULHU_URI, { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect(process.env.CTHULHU_URI, { useNewUrlParser: true, useUnifiedTopology: true });
 
 // mongoose.connect('mongodb://127.0.0.1:27017/cthulhuFlixDB', { useNewUrlParser: true, useUnifiedTopology: true });
 
