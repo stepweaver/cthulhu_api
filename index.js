@@ -206,26 +206,21 @@ app.put('/users/:Username', passport.authenticate('jwt', { session: false }),
     }
 
     try {
-      // Find the user by username
       const user = await Users.findOne({ Username: req.params.Username }).exec();
 
       if (!user) {
         return res.status(404).send('User not found');
       }
 
-      // Update the user's properties
       user.Username = req.body.Username;
       user.Email = req.body.Email;
       user.Birthday = req.body.Birthday;
 
-      // Check if the password has changed
       if (req.body.Password) {
-        // Hash the new password
-        const hashedPassword = bcrypt.hash(req.body.Password, 10);
+        const hashedPassword = await bcrypt.hash(req.body.Password, 10);
         user.Password = hashedPassword;
       }
 
-      // Save the updated user
       const updatedUser = await user.save();
 
       res.status(200).json(updatedUser);
