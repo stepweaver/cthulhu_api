@@ -7,7 +7,8 @@ const express = require('express'),
   uuid = require('uuid'),
   mongoose = require('mongoose'),
   cors = require('cors'),
-  bcrypt = require('bcrypt');
+  bcrypt = require('bcrypt'),
+  saltRounds = 10;
   
 const Models = require('./models'),
   Movies = Models.Movie,
@@ -51,7 +52,8 @@ app.post('/users',
     check('Username', 'Username contains non alphanumeric - not allowed').isAlphanumeric(),
     check('Password', 'Password is required').not().isEmpty(),
     check('Email', 'Email is not valid').isEmail()
-  ], (req, res) => {
+  ], 
+  async (req, res) => {
     
     // check the validation object for errors
     let errors = validationResult(req);
@@ -60,33 +62,39 @@ app.post('/users',
       return res.status(422).json({ errors: errors.array() });
     }
 
-    let hashedPassword = Users.hashPassword(req.body.Password);
-    Users.findOne({ Username: req.body.Username })
-      .then((user) => {
-        if (user) {
-          return res.status(400).send(req.body.Username + ' already exists');
-        } else {
-          Users.create({
-            Username: req.body.Username,
-            Password: hashedPassword,
-            Email: req.body.Email,
-            Birthday: req.body.Birthday
-          })
-          .then((user) => {
-            res.status(201).json(user);
-          })
-          .catch((error) => {
-            console.error(error);
-            res.status(500).send('Error: ' + error);
-          });
-        }
-      })
-      .catch((error) => {
-        console.error(error);
-        res.status(500).send('Error: ' + error);
-      });
+    try {
+      let hashedPassword = await bcrypt.hash(req.body.Password, saltRounds);
+      
+      Users.findOne({ Username: req.body.Username })
+        .then((user) => {
+          if (user) {
+            return res.status(400).send(req.body.Username + ' already exists');
+          } else {
+            Users.create({
+              Username: req.body.Username,
+              Password: hashedPassword,
+              Email: req.body.Email,
+              Birthday: req.body.Birthday
+            })
+              .then((user) => {
+                res.status(201).json(user);
+              })
+              .catch((error) => {
+                console.error(error);
+                res.status(500).send('Error: ' + error);
+              });
+          }
+        })
+        .catch((error) => {
+          console.error(error);
+          res.status(500).send('Error: ' + error);
+        });
+    } catch (error) {
+      console.error(error);
+      res.status(500).send('Error: ' + error);
+    }
   }
-); 
+);
 
 app.post('/users/:Username/movies/:MovieId', passport.authenticate('jwt', { session: false }), async (req, res) => {
   try {
