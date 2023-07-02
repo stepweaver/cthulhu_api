@@ -46,16 +46,19 @@ require('./passport');
 // CREATE
 app.post('/users', 
   [
-    check('username').isLength({ min: 5 }).withMessage('Username must be at least 5 characters long'),
-    check('username').isAlphanumeric().withMessage('Username must contain only alphanumeric characters'),
-    check('password').notEmpty().withMessage('Password is required'),
-    check('email').isEmail().withMessage('Email is not valid')
+    check('Username', 'Username is required').isLength({ min: 5 }),
+    check('Username', 'Username contains non alphanumeric - not allowed').isAlphanumeric(),
+    check('Password', 'Password is required').not().isEmpty(),
+    check('Email', 'Email is not valid').isEmail()
   ], (req, res) => {
-    const errors = validationResult(req);
+    
+    // check the validation object for errors
+    let errors = validationResult(req);
+
     if (!errors.isEmpty()) {
       return res.status(422).json({ errors: errors.array() });
     }
-    
+
     let hashedPassword = Users.hashPassword(req.body.Password);
     Users.findOne({ Username: req.body.Username })
       .then((user) => {
