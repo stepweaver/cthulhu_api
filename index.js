@@ -206,7 +206,7 @@ app.put('/users/:Username', passport.authenticate('jwt', { session: false }),
 
     try {
       // Find the user by username
-      const user = await Users.findOn({ Username: req.params.Username }).exec();
+      const user = await Users.findOne({ Username: req.params.Username }).exec();
 
       if (!user) {
         return res.status(404).send('User not found');
