@@ -17,7 +17,7 @@ mongoose.connect( process.env.CONNECTION_URI, { useNewUrlParser: true, useUnifie
 
 const accessLogStream = fs.createWriteStream(path.join(__dirname, 'log.txt'), {flags: 'a'})
 
-let allowedOrigins = ['http://localhost:8080'];
+let allowedOrigins = ['*'];
 
 app.use(cors({
   origin: (origin, callback) => {
