@@ -6,8 +6,7 @@ const express = require('express'),
   bodyParser = require('body-parser'),
   uuid = require('uuid'),
   mongoose = require('mongoose'),
-  cors = require('cors'),
-  bcrypt = require('bcrypt');
+  cors = require('cors');
   
 const Models = require('./models'),
   Movies = Models.Movie,
@@ -45,31 +44,19 @@ const passport = require('passport');
 require('./passport');
 
 // CREATE
-app.post('/users', 
-  [
-    check('Username', 'Username is required').isLength({ min: 5}),
-    check('Username', 'Username contains non alphanumeric characters - not allowed').isAlphanumeric(),
-    check('Password', 'Password is required').not().isEmpty(),
-    check('Email', 'Email does not appear to be valid').isEmail()
-  ], (req, res) => {
-    let errors = validationResult(req);
-
-    if (!errors.isEmpty()) {
-      return res.status(422).json({ errors: errors.array() });
-    }
-
-    let hashedPassword = Users.hashPassword(req.body.Password);
-    Users.findOne({ Username: req.body.Username })
-      .then((user) => {
-        if (user) {
-          return res.status(400).send(req.body.Username + ' already exists');
-        } else {
-          Users.create({
-            Username: req.body.Username,
-            Password: hashedPassword,
-            Email: req.body.Email,
-            Birthday: req.body.Birthday
-          })
+app.post('/users', (req, res) => {
+  let hashedPassword = Users.hashPassword(req.body.Password);
+  Users.findOne({ Username: req.body.Username })
+    .then((user) => {
+      if (user) {
+        return res.status(400).send(req.body.Username + ' already exists');
+      } else {
+        Users.create({
+          Username: req.body.Username,
+          Password: hashedPassword,
+          Email: req.body.Email,
+          Birthday: req.body.Birthday
+        })
           .then((user) => {
             res.status(201).json(user);
           })
@@ -188,50 +175,24 @@ app.get('/movies/directors/:directorName', passport.authenticate('jwt', { sessio
 });
 
 // UPDATE
-app.put('/users/:Username', passport.authenticate('jwt', { session: false }), 
-  [
-    check('Username', 'Username is required').isLength({ min: 5}),
-    check('Username', 'Username contains non alphanumeric characters - not allowed').isAlphanumeric(),
-    check('Password', 'Password is required').not().isEmpty(),
-    check('Email', 'Email does not appear to be valid').isEmail()
-  ], 
-  async (req, res) => {
-    let errors = validationResult(req);
-
-    if (!errors.isEmpty()) {
-      return res.status(422).json({ errors: errors.array() });
+app.put('/users/:Username', passport.authenticate('jwt', { session: false }), (req, res) => {
+  Users.findOneAndUpdate({ Username: req.params.Username }, { $set:
+    {
+      Username: req.body.Username,
+      Password: req.body.Password,
+      Email: req.body.Email,
+      Birthday: req.body.Birthday
     }
-
-    try {
-      // Find the user by username
-      const user = await Users.findOne({ Username: req.params.Username }).exec();
-
-      if (!user) {
-        return res.status(404).send('User not found');
-      }
-
-      // Update the user's properties
-      user.Username = req.body.Username;
-      user.Email = req.body.Email;
-      user.Birthday = req.body.Birthday;
-
-      // Check if the password has changed
-      if (req.body.Password) {
-        // Hash the new password
-        const hashedPassword = await bcrypt.hash(req.body.Password, 10);
-        user.Password = hashedPassword;
-      }
-
-      // Save the updated user
-      const updatedUser = await user.save();
-
+  },
+  { new: true })
+    .then((updatedUser) => {
       res.status(200).json(updatedUser);
-    } catch (error) {
-      console.error(error);
-      res.status(500).send('Error: ' + error);
-    }
-  }
-);
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).send('Error: ' + err);
+    });
+});
 
 // DELETE
 app.delete('/users/:Username/movies/:MovieId', passport.authenticate('jwt', { session: false }), (req, res) => {
