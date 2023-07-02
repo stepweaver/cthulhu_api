@@ -6,7 +6,8 @@ const express = require('express'),
   bodyParser = require('body-parser'),
   uuid = require('uuid'),
   mongoose = require('mongoose'),
-  cors = require('cors');
+  cors = require('cors'),
+  bcrypt = require('bcrypt');
   
 const Models = require('./models'),
   Movies = Models.Movie,
