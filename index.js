@@ -46,10 +46,10 @@ require('./passport');
 // CREATE
 app.post('/users', 
   [
-    check('username').trim().isLength({ min: 5 }).withMessage('Username must be at least 5 characters long'),
+    check('username').isLength({ min: 5 }).withMessage('Username must be at least 5 characters long'),
     check('username').isAlphanumeric().withMessage('Username must contain only alphanumeric characters'),
-    check('password').trim().notEmpty().withMessage('Password is required'),
-    check('email').trim().isEmail().withMessage('Email is not valid')
+    check('password').notEmpty().withMessage('Password is required'),
+    check('email').isEmail().withMessage('Email is not valid')
   ], (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
