@@ -124,7 +124,7 @@ app.get('/documentation', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'documentation.html'));;
 });
 
-app.get('/movies', passport.authenticate('jwt', { session: false }), (req, res) => {
+app.get('/movies', /*passport.authenticate('jwt', { session: false }),*/ (req, res) => {
   Movies.find()
     .then((movies) => {
       res.status(200).json(movies);
@@ -135,7 +135,7 @@ app.get('/movies', passport.authenticate('jwt', { session: false }), (req, res) 
     });
 });
 
-app.get('/users', /*passport.authenticate('jwt', { session: false }),*/ (req, res) => {
+app.get('/users', passport.authenticate('jwt', { session: false }), (req, res) => {
   Users.find()
     .then((users) => {
       res.status(200).json(users);
