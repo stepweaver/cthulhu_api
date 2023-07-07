@@ -20,7 +20,7 @@ const accessLogStream = fs.createWriteStream(path.join(__dirname, 'log.txt'), {f
 
 const { check, validationResult } = require('express-validator');
 
-let allowedOrigins = ['http://localhost:1234'];
+let allowedOrigins = ['*'];
 
 app.use(cors({
   origin: (origin, callback) => {
